@@ -1,0 +1,174 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(I5tibar());
+}
+
+class I5tibar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Exam ESTIN 2027 !"),
+          backgroundColor: Colors.grey[700],
+        ),
+        backgroundColor: Colors.grey[300],
+        body: MY_WORK(),
+      ),
+    );
+  }
+}
+
+class MY_WORK extends StatefulWidget {
+  @override
+  State<MY_WORK> createState() => _MY_WORKState();
+}
+
+class _MY_WORKState extends State<MY_WORK> {
+  List<Widget> answerresult = [];
+  int score = 0;
+
+  List<String> Question = [
+    "عدد كواكب المجموعة الشمسية هو 8 كواكب",
+    "القطط هي حيوانات لاحمة",
+    "الصين موجودة في القارة الاسترالية",
+    "الأرض التي نعيش فيها هي مسطحة",
+  ];
+
+  int nq = 0;
+  int ni = 1;
+
+  void showResetDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("انتهى الاختبار !", textAlign: TextAlign.center),
+          content: Text(
+            "لقد أجبت على $score من أصل ${Question.length} أسئلة بشكل صحيح.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18.0),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  nq = 0;
+                  ni = 1;
+                  score = 0;
+                  answerresult.clear();
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text("إعادة المحاولة", style: TextStyle(color: Colors.blue, fontSize: 16.0)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void checkAnswer(bool userChoice) {
+    setState(() {
+      bool isCorrect = false;
+
+      if (userChoice == true) {
+        if (nq == 0 || nq == 1) {
+          isCorrect = true;
+          score++;
+        }
+      } else {
+        if (nq == 2 || nq == 3) {
+          isCorrect = true;
+          score++;
+        }
+      }
+
+      answerresult.add(Icon(
+        isCorrect ? Icons.thumb_up : Icons.thumb_down,
+        color: isCorrect ? Colors.green : Colors.red,
+      ));
+
+      if (nq < Question.length - 1) {
+        nq++;
+        ni++;
+      } else {
+        showResetDialog();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Wrap(
+            spacing: 5.0,
+            runSpacing: 5.0,
+            children: answerresult,
+          ),
+        ),
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "images/image-$ni.jpg",
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+                SizedBox(height: 25.0),
+                Text(
+                  Question[nq],
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextButton(
+              onPressed: () => checkAnswer(true),
+              child: Text(
+                "صحيح",
+                style: TextStyle(color: Colors.white, fontSize: 20.0),
+              ),
+              style: TextButton.styleFrom(backgroundColor: Colors.green),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextButton(
+              onPressed: () => checkAnswer(false),
+              child: Text(
+                "خطأ",
+                style: TextStyle(color: Colors.white, fontSize: 20.0),
+              ),
+              style: TextButton.styleFrom(backgroundColor: Colors.red),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
